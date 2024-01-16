@@ -1,0 +1,48 @@
+#Creation Eduardo Tisato
+#Date: 16 Jan 2024
+#Ver A.01
+
+#The objective is create a code able to clean a random database export.
+#It will be used for a KPI and database analysis
+
+#Importing Pandas and Numpy to threat data in Python
+import pandas as pd
+import numpy as np
+
+# Step: Read Excel file and save it in dataframe
+file_path = '/content/DSB_MF_08-Jigboard Size.xlsx'
+
+df = pd.read_excel(file_path)
+
+#Analysis of object's types
+print(df.dtypes)
+
+# Step: To be sure of the object types, I faced some issues in next formules when not used.
+df['Project'] = df['Project'].astype(str)
+df['Project'] = df['Project'].replace('nan', 'NaN')
+df['Length (m)'] = df['Length (m)'].astype(float)
+df['Height (m)'] = df['Height (m)'].astype(float)
+print(df.dtypes)
+
+# Step: To have a look in dataframe with more data
+print(df.iloc[0:20])
+
+# Delete rows where values are NaN in column 'Harness'
+df = df.dropna(subset=['Harness'])
+print(df.iloc[0:16])
+df
+
+# Select and reorder columns
+columns = ['Project', 'Harness','Solution Eng','Version Eng','Sol Indus','Ver Indus','Length (m)', 'Height (m)']
+df = df.loc[:, columns]
+
+print(df.head())
+
+# Split naming from column Project to have new two columns "Project Name and Car Name"
+df[['Project Name', 'Car Name']] = df['Project'].str.split('_', n=1, expand=True)
+df
+
+# Save file in Excel
+df.to_excel('/content/Result.xlsx', index=False)
+
+print('File done!')
